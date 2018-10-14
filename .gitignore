@@ -6,3 +6,4 @@ lib/googletest
 cmake_install.cmake
 Makefile
 tp2_modelado_con_grafos
+/build/*
