@@ -43,19 +43,29 @@ vector<vector<Node>> Graph::getAdjacencyList()
 bool Graph::operator==(Graph &other) {
     this->sortAdjacencyLists();
     other.sortAdjacencyLists();
-    sort(this->_edges.begin(),this->_edges.end());
-    sort(other.getEdges().begin(),other.getEdges().end());
+    std::sort(this->_edges.begin(),this->_edges.end());
+    std::sort(other.getEdges().begin(),other.getEdges().end());
     return  (this->_edges == other.getEdges() ) && (this->_adjacencyList == other.getAdjacencyList());
 }
 
 void Graph::sortAdjacencyLists() {
     for (auto &index : this->_adjacencyList) {
-        sort(index.begin(), index.end() );
+        std::sort(index.begin(), index.end() );
     }
 }
 
 Graph Graph::getMSTKruskal() {
-    return Graph(0);
+    Graph mst(this->getAdjacencyList().size());
+    DisjoinSet disjoinSet(this);
+    vector<Edge> edges = this->getEdges();
+    sort(edges.begin(),edges.end(), cmpWeigth);
+    for(Edge edge : edges){
+        if(disjoinSet.find(edge.nodes.first) !=  disjoinSet.find(edge.nodes.second)){
+            mst.addEdge(edge);
+            disjoinSet.join(disjoinSet.find(edge.nodes.first), disjoinSet.find(edge.nodes.second));
+        }
+    }
+    return mst;
 }
 
 vector<vector<float>> Graph::getAdjacencyMatrix() const
@@ -119,4 +129,21 @@ Graph Graph::getPrimMST() const
     }
     
     return mst;
+}
+
+float Graph::getTotalWeigth() {
+    float totalWeight = 0;
+    for (auto const& edge : this->getEdges())
+    {
+        totalWeight += edge.weight;
+    }
+    return totalWeight;
+}
+
+void Graph::addEdge(Edge otherGraphEdge) {
+    auto &first = otherGraphEdge.nodes.first;
+    auto &second = otherGraphEdge.nodes.second;
+    _edges.push_back(Edge(_edges.size(), first, second, otherGraphEdge.weight));
+    _adjacencyList[first.id].push_back(second.id);
+    _adjacencyList[second.id].push_back(first.id);
 }

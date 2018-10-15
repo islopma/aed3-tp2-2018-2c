@@ -38,6 +38,13 @@ struct Edge
     }
 };
 
+struct
+{
+    bool operator() (Edge& ledge, Edge& redge) {
+        return ledge.weight <redge.weight;
+    }
+} cmpWeigth ;
+
 class Graph
 {
 private:
@@ -52,11 +59,23 @@ public:
     Graph(const int &nodesNumber);
     void addEdge(const Node &first, const Node &second);
     void addEdge(const Node &first, const Node &second, const float weight);
+    void addEdge(Edge otherGraphEdge);
     vector<Edge> getEdges() ;
     vector<vector<Node>> getAdjacencyList() ;
     Graph getMSTKruskal();
     bool operator==(Graph &other);
     Graph getPrimMST() const;
+    float getTotalWeigth();
+};
+
+class DisjoinSet {
+public:
+    DisjoinSet(Graph *graph);
+    int find(Node nodo);
+    void join(Node alreadyIn, Node newNode);
+
+private:
+    std::vector<int> components;
 };
 
 #endif
