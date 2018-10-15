@@ -29,12 +29,30 @@ void Graph::addEdge(const Node &first, const Node &second, const int weight)
     _adjacencyList[second.id].push_back(first.id);
 }
 
-vector<Edge> Graph::getEdges() const
+vector<Edge> Graph::getEdges()
 {
     return _edges;
 }
 
-vector<vector<Node>> Graph::getAdjacencyList() const
+vector<vector<Node>> Graph::getAdjacencyList()
 {
     return _adjacencyList;
+}
+
+bool Graph::operator==(Graph &other) {
+    this->sortAdjacencyLists();
+    other.sortAdjacencyLists();
+    sort(this->_edges.begin(),this->_edges.end());
+    sort(other.getEdges().begin(),other.getEdges().end());
+    return  (this->_edges == other.getEdges() ) && (this->_adjacencyList == other.getAdjacencyList());
+}
+
+void Graph::sortAdjacencyLists() {
+    for (auto &index : this->_adjacencyList) {
+        sort(index.begin(), index.end() );
+    }
+}
+
+Graph Graph::getMSTKruskal() {
+    return Graph(0);
 }
