@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
 project(tp2_modelado_con_grafos)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
 
 add_subdirectory(lib/googletest)
 include_directories(lib/googletest/googletest/include)
