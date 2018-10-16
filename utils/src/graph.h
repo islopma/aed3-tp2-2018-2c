@@ -73,7 +73,6 @@ public:
     bool operator==(Graph &other);
     float getTotalWeigth();
     void setMSTStrategy(MSTStrategy *strategy);
-    Graph getMSTKruskal();
     Graph getMST();
 };
 
