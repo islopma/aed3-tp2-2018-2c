@@ -70,12 +70,30 @@ public:
 
 class DisjoinSet {
 public:
-    DisjoinSet(Graph *graph);
-    int find(Node nodo);
-    void join(Node alreadyIn, Node newNode);
+    virtual int find(Node nodo) = 0;
+    virtual void join(Node alreadyIn, Node newNode) = 0;
+    virtual void create(Graph *graph) = 0;
+    virtual ~DisjoinSet() { };
 
-private:
+protected:
     std::vector<int> components;
+
 };
 
+class DisjoinSetDefault : public DisjoinSet {
+public:
+    int find(Node nodo);
+    void join(Node alreadyIn, Node newNode);
+    void create(Graph *graph);
+};
+
+class DisjoinSetCompressed : public DisjoinSet {
+public:
+    int find(Node nodo);
+    void join(Node alreadyIn, Node newNode);
+    void create(Graph *graph);
+
+private:
+    std::vector<int> heights;
+};
 #endif

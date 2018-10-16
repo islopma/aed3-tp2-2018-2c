@@ -56,13 +56,15 @@ void Graph::sortAdjacencyLists() {
 
 Graph Graph::getMSTKruskal() {
     Graph mst(this->getAdjacencyList().size());
-    DisjoinSet disjoinSet(this);
+    // todo cambiar
+    DisjoinSet *disjoinSet = new DisjoinSetDefault();
+    disjoinSet->create(this);
     vector<Edge> edges = this->getEdges();
     sort(edges.begin(),edges.end(), cmpWeigth);
     for(Edge edge : edges){
-        if(disjoinSet.find(edge.nodes.first) !=  disjoinSet.find(edge.nodes.second)){
+        if(disjoinSet->find(edge.nodes.first) !=  disjoinSet->find(edge.nodes.second)){
             mst.addEdge(edge);
-            disjoinSet.join(disjoinSet.find(edge.nodes.first), disjoinSet.find(edge.nodes.second));
+            disjoinSet->join(disjoinSet->find(edge.nodes.first), disjoinSet->find(edge.nodes.second));
         }
     }
     return mst;
