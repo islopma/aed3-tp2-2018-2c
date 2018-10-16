@@ -7,6 +7,9 @@ using namespace std;
 
 class Graph;
 class MSTStrategy;
+class DisjoinSet;
+class DisjoinSetDefault;
+class DisjoinSetCompressed;
 
 struct Node
 {
@@ -80,11 +83,14 @@ public:
 };
 
 class KruskalDefaultMST : public MSTStrategy{
+public:
     Graph getMST(Graph *pGraph);
+    DisjoinSetDefault *getContatiner();
 };
 
 class KruskalCompressedMST : public MSTStrategy{
     Graph getMST(Graph *pGraph);
+    DisjoinSetCompressed *getContainer();
 };
 
 class PrimMST : public MSTStrategy{

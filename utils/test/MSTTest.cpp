@@ -9,7 +9,10 @@ struct MSTTest : testing::Test {
 
     MSTTest(){
         graph = new Graph();
+        //graph->setMSTStrategy(new KruskalDefaultMST());
+        //graph->setMSTStrategy(new KruskalCompressedMST());
         graph->setMSTStrategy(new PrimMST());
+
     }
 
     ~MSTTest(){

@@ -63,22 +63,6 @@ void Graph::sortAdjacencyLists() {
     }
 }
 
-Graph Graph::getMSTKruskal() {
-    Graph mst(this->getAdjacencyList().size());
-    // todo cambiar
-    DisjoinSet *disjoinSet = new DisjoinSetDefault();
-    disjoinSet->create(this);
-    vector<Edge> edges = this->getEdges();
-    sort(edges.begin(),edges.end(), cmpWeigth);
-    for(Edge edge : edges){
-        if(disjoinSet->find(edge.nodes.first) !=  disjoinSet->find(edge.nodes.second)){
-            mst.addEdge(edge);
-            disjoinSet->join(disjoinSet->find(edge.nodes.first), disjoinSet->find(edge.nodes.second));
-        }
-    }
-    return mst;
-}
-
 vector<vector<float>> Graph::getAdjacencyMatrix() const
 {
     auto nodesNumber = _adjacencyList.size();
@@ -92,6 +76,69 @@ vector<vector<float>> Graph::getAdjacencyMatrix() const
         adjacencyMatrix[second][first] = edge.weight;
     }
     return adjacencyMatrix;
+}
+
+float Graph::getTotalWeigth() {
+    float totalWeight = 0;
+    for (auto const& edge : this->getEdges())
+    {
+        totalWeight += edge.weight;
+    }
+    return totalWeight;
+}
+
+void Graph::addEdge(Edge otherGraphEdge) {
+    auto &first = otherGraphEdge.nodes.first;
+    auto &second = otherGraphEdge.nodes.second;
+    _edges.push_back(Edge(_edges.size(), first, second, otherGraphEdge.weight));
+    _adjacencyList[first.id].push_back(second.id);
+    _adjacencyList[second.id].push_back(first.id);
+}
+
+void Graph::setMSTStrategy(MSTStrategy *strategy) {
+    this->mstStrategy = strategy;
+}
+
+Graph Graph::getMST() {
+    return mstStrategy->getMST(this);
+}
+
+DisjoinSetCompressed *KruskalCompressedMST::getContainer() {
+    return new DisjoinSetCompressed();
+}
+
+DisjoinSetDefault * KruskalDefaultMST::getContatiner() {
+    return new DisjoinSetDefault();
+}
+
+Graph KruskalDefaultMST::getMST(Graph* graph) {
+    Graph mst(graph->getAdjacencyList().size());
+    DisjoinSet *disjoinSet = this->getContatiner();
+    disjoinSet->create(graph);
+    vector<Edge> edges = graph->getEdges();
+    sort(edges.begin(),edges.end(), cmpWeigth);
+    for(Edge edge : edges){
+        if(disjoinSet->find(edge.nodes.first) !=  disjoinSet->find(edge.nodes.second)){
+            mst.addEdge(edge);
+            disjoinSet->join(disjoinSet->find(edge.nodes.first), disjoinSet->find(edge.nodes.second));
+        }
+    }
+    return mst;
+}
+
+Graph KruskalCompressedMST::getMST(Graph* graph) {
+    Graph mst(graph->getAdjacencyList().size());
+    DisjoinSet *disjoinSet = this->getContainer();
+    disjoinSet->create(graph);
+    vector<Edge> edges = graph->getEdges();
+    sort(edges.begin(),edges.end(), cmpWeigth);
+    for(Edge edge : edges){
+        if(disjoinSet->find(edge.nodes.first) !=  disjoinSet->find(edge.nodes.second)){
+            mst.addEdge(edge);
+            disjoinSet->join(disjoinSet->find(edge.nodes.first), disjoinSet->find(edge.nodes.second));
+        }
+    }
+    return mst;
 }
 
 Graph PrimMST::getMST(Graph *graph)
@@ -138,33 +185,7 @@ Graph PrimMST::getMST(Graph *graph)
             }
         }
     }
-    
+
     return mst;
 }
-
-float Graph::getTotalWeigth() {
-    float totalWeight = 0;
-    for (auto const& edge : this->getEdges())
-    {
-        totalWeight += edge.weight;
-    }
-    return totalWeight;
-}
-
-void Graph::addEdge(Edge otherGraphEdge) {
-    auto &first = otherGraphEdge.nodes.first;
-    auto &second = otherGraphEdge.nodes.second;
-    _edges.push_back(Edge(_edges.size(), first, second, otherGraphEdge.weight));
-    _adjacencyList[first.id].push_back(second.id);
-    _adjacencyList[second.id].push_back(first.id);
-}
-
-void Graph::setMSTStrategy(MSTStrategy *strategy) {
-    this->mstStrategy = strategy;
-}
-
-Graph Graph::getMST() {
-    return mstStrategy->getMST(this);
-}
-
 
