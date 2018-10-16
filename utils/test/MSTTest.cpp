@@ -23,11 +23,10 @@ struct MSTTest : testing::Test {
 TEST_F(MSTTest,whenGetKruskalMSTOfATree_mustReturnTheSameGraph){
     graph->build(2);
     graph->addEdge(Node(0),Node(1),5);
-    graph->addEdge(Node(0),Node(1),200);
 
     Graph actualMST = graph->getMST();
 
-    Graph expectedMST(3);
+    Graph expectedMST(2);
     expectedMST.addEdge(Node(0),Node(1),5);
     ASSERT_EQ(actualMST.getTotalWeigth(),expectedMST.getTotalWeigth());
 }

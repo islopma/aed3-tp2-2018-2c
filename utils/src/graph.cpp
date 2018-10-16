@@ -1,4 +1,5 @@
 #include "graph.h"
+#include <algorithm>
 #include <limits>
 
 Node::Node(const int &id)
@@ -143,7 +144,8 @@ Graph KruskalCompressedMST::getMST(Graph* graph) {
 
 Graph PrimMST::getMST(Graph *graph)
 {
-    auto nodesNumber = graph->getAdjacencyList().size();
+    auto adjacencyList = graph->getAdjacencyList();
+    auto nodesNumber = adjacencyList.size();
     auto adjacencyMatrix = graph->getAdjacencyMatrix();
     auto visited = vector<bool>(nodesNumber, false);
     auto minWeight = vector<float>(nodesNumber, numeric_limits<float>::infinity());
@@ -151,7 +153,7 @@ Graph PrimMST::getMST(Graph *graph)
     // select first node and update adjacent weights
     visited[0] = true;
     minWeight[0] = 0;
-    for (auto const& node : graph->getAdjacencyList()[0])
+    for (auto const& node : adjacencyList[0])
     {
         minWeight[node.id] = adjacencyMatrix[0][node.id];
         parents[node.id] = 0;
@@ -175,7 +177,7 @@ Graph PrimMST::getMST(Graph *graph)
         // add edge and update weights
         mst.addEdge(Node(parents[closestNode]), Node(closestNode), bestWeight);
         visited[closestNode] = true;
-        for (auto const& node : graph->getAdjacencyList()[closestNode])
+        for (auto const& node : adjacencyList[closestNode])
         {
             if (!visited[node.id]
                 && adjacencyMatrix[closestNode][node.id] < minWeight[node.id])
