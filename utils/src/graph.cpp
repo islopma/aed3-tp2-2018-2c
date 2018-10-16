@@ -1,4 +1,5 @@
 #include "graph.h"
+#include <algorithm>
 #include <limits>
 
 Node::Node(const int &id)
