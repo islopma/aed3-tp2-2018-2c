@@ -8,4 +8,5 @@ include_directories(lib/googletest/googlemock/include)
 
 set(SOURCE_FILES main.cpp prueba_integracion_con_gtest/test/factorialTest.cpp prueba_integracion_con_gtest/src/factorial.cpp utils/src/graph.cpp utils/test/graphTest.cpp utils/test/MSTTest.cpp utils/src/DisjoinSet.cpp utils/test/DisjoinSetTest.cpp)
 add_executable(tp2_modelado_con_grafos ${SOURCE_FILES})
+add_executable(clustering utils/src/graph.cpp utils/src/DisjoinSet.cpp utils/src/clustering/clustering.cpp utils/src/clustering/point.cpp)
 target_link_libraries(tp2_modelado_con_grafos gtest gtest_main)
