@@ -5,6 +5,9 @@
 
 using namespace std;
 
+class Graph;
+class MSTStrategy;
+
 struct Node
 {
     int id;
@@ -52,21 +55,42 @@ private:
     vector<vector<Node>> _adjacencyList;
     void addNode();
     void sortAdjacencyLists();
-
+    MSTStrategy *mstStrategy;
 
 public:
     vector<vector<float>> getAdjacencyMatrix() const;
+    Graph();
     Graph(const int &nodesNumber);
+    void build(const int &nodesNumber);
     void addEdge(const Node &first, const Node &second);
     void addEdge(const Node &first, const Node &second, const float weight);
     void addEdge(Edge otherGraphEdge);
     vector<Edge> getEdges() ;
     vector<vector<Node>> getAdjacencyList() ;
-    Graph getMSTKruskal();
     bool operator==(Graph &other);
-    Graph getPrimMST() const;
     float getTotalWeigth();
+    void setMSTStrategy(MSTStrategy *strategy);
+    Graph getMSTKruskal();
+    Graph getMST();
 };
+
+class MSTStrategy{
+public:
+    virtual Graph getMST(Graph *pGraph) = 0;
+};
+
+class KruskalDefaultMST : public MSTStrategy{
+    Graph getMST(Graph *pGraph);
+};
+
+class KruskalCompressedMST : public MSTStrategy{
+    Graph getMST(Graph *pGraph);
+};
+
+class PrimMST : public MSTStrategy{
+    Graph getMST(Graph *pGraph);
+};
+
 
 class DisjoinSet {
 public:

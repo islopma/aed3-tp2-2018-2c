@@ -7,10 +7,19 @@ Node::Node(const int &id)
 Edge::Edge(const int id, const Node &first, const Node &second, const float weight)
 : id(id), nodes(make_pair(first, second)), weight(weight) {}
 
+Graph::Graph() {
+    _edges = vector<Edge>();
+    _adjacencyList = vector<vector<Node>>();
+}
+
 Graph::Graph(const int &nodesNumber)
 {
     _edges = vector<Edge>();
     _adjacencyList = vector<vector<Node>>(nodesNumber, vector<Node>());
+}
+
+void Graph::build(const int &nodesNumber) {
+    _adjacencyList.resize(nodesNumber);
 }
 
 void Graph::addNode()
@@ -85,17 +94,17 @@ vector<vector<float>> Graph::getAdjacencyMatrix() const
     return adjacencyMatrix;
 }
 
-Graph Graph::getPrimMST() const
+Graph PrimMST::getMST(Graph *graph)
 {
-    auto nodesNumber = _adjacencyList.size();
-    auto adjacencyMatrix = getAdjacencyMatrix();
+    auto nodesNumber = graph->getAdjacencyList().size();
+    auto adjacencyMatrix = graph->getAdjacencyMatrix();
     auto visited = vector<bool>(nodesNumber, false);
     auto minWeight = vector<float>(nodesNumber, numeric_limits<float>::infinity());
     auto parents = vector<int>(nodesNumber, -1);
     // select first node and update adjacent weights
     visited[0] = true;
     minWeight[0] = 0;
-    for (auto const& node : _adjacencyList[0])
+    for (auto const& node : graph->getAdjacencyList()[0])
     {
         minWeight[node.id] = adjacencyMatrix[0][node.id];
         parents[node.id] = 0;
@@ -119,7 +128,7 @@ Graph Graph::getPrimMST() const
         // add edge and update weights
         mst.addEdge(Node(parents[closestNode]), Node(closestNode), bestWeight);
         visited[closestNode] = true;
-        for (auto const& node : _adjacencyList[closestNode])
+        for (auto const& node : graph->getAdjacencyList()[closestNode])
         {
             if (!visited[node.id]
                 && adjacencyMatrix[closestNode][node.id] < minWeight[node.id])
@@ -149,3 +158,13 @@ void Graph::addEdge(Edge otherGraphEdge) {
     _adjacencyList[first.id].push_back(second.id);
     _adjacencyList[second.id].push_back(first.id);
 }
+
+void Graph::setMSTStrategy(MSTStrategy *strategy) {
+    this->mstStrategy = strategy;
+}
+
+Graph Graph::getMST() {
+    return mstStrategy->getMST(this);
+}
+
+
