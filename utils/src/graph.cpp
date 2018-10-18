@@ -1,6 +1,10 @@
 #include "graph.h"
 #include <algorithm>
 #include <limits>
+#include <queue>
+
+#define NOT_VISITED 0
+
 
 Node::Node(const int &id)
 : id(id) {}
@@ -191,3 +195,53 @@ Graph PrimMST::getMST(Graph *graph)
     return mst;
 }
 
+vector<int> Graph::componenteConexaDeVertices() {
+    vector<int> vertexByComponent (this->getAdjacencyList().size(), NOT_VISITED);
+    int runFrom;
+    int numberOfComponent = 1;
+    do{
+        runFrom = this->firstVertexNotVisited(vertexByComponent);
+        this->visitVertexFrom(runFrom, vertexByComponent, numberOfComponent);
+        numberOfComponent++;
+    }while(this->areVerticesToVisit(vertexByComponent));
+
+    return vertexByComponent;
+}
+
+int Graph::firstVertexNotVisited(vector<int> &vertexByComponent) {
+    int firstVertex = -1;
+    for(int index = 0;index < vertexByComponent.size(); index++){
+        if(vertexByComponent.at(index) == NOT_VISITED){
+            firstVertex = index;
+            break;
+        }
+    }
+    return firstVertex;
+}
+
+bool Graph::areVerticesToVisit(vector<int> &vertexByComponent) {
+    for(int index = 0; index < vertexByComponent.size(); index++){
+        if(vertexByComponent.at(index) == NOT_VISITED){
+            return true;
+        }
+    }
+    return false;
+}
+
+void Graph::visitVertexFrom(int origin, vector<int> &vertexByComponents, int numberOfComponent) {
+    std::queue<int> vertexId;
+    int actual;
+
+    vertexId.push(origin);
+    while( !vertexId.empty() ){
+        actual = vertexId.front();
+        vertexId.pop();
+
+        vertexByComponents.at(actual) = numberOfComponent;
+        for(Node adyacent : this->_adjacencyList.at(actual)){
+            if(vertexByComponents.at(adyacent.id) == NOT_VISITED){
+                vertexId.push( adyacent.id );
+            }
+        }
+    }
+}

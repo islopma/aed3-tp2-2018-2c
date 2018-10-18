@@ -74,6 +74,13 @@ public:
     float getTotalWeigth();
     void setMSTStrategy(MSTStrategy *strategy);
     Graph getMST();
+    vector<int> componenteConexaDeVertices();
+
+    int firstVertexNotVisited(vector<int> &vertexByComponent);
+
+    bool areVerticesToVisit(vector<int> &vertexByComponent);
+
+    void visitVertexFrom(int origin, vector<int> &vertexByComponents, int numberOfComponent);
 };
 
 class MSTStrategy{
