@@ -68,6 +68,7 @@ public:
     void addEdge(const Node &first, const Node &second);
     void addEdge(const Node &first, const Node &second, const float weight);
     void addEdge(Edge otherGraphEdge);
+    void removeEdge(Edge edge);
     vector<Edge> getEdges() ;
     vector<vector<Node>> getAdjacencyList() ;
     bool operator==(Graph &other);

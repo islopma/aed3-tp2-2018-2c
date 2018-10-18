@@ -96,6 +96,32 @@ void Graph::addEdge(Edge otherGraphEdge) {
     _adjacencyList[second.id].push_back(first.id);
 }
 
+void Graph::removeEdge(Edge edge)
+{
+    // remove from edges list;
+    _edges.erase(remove_if(
+        _edges.begin(), _edges.end(),
+        [edge](const Edge& x) { 
+        return x.id == edge.id;
+    }), _edges.end());
+
+    // remove from adjacency list
+    auto firstNode = edge.nodes.first;
+    auto secondNode = edge.nodes.second;
+
+    _adjacencyList[firstNode.id].erase(remove_if(
+        _adjacencyList[firstNode.id].begin(), _adjacencyList[firstNode.id].end(),
+        [secondNode](const Node& x) { 
+        return x.id == secondNode.id;
+    }), _adjacencyList[firstNode.id].end());
+
+    _adjacencyList[secondNode.id].erase(remove_if(
+        _adjacencyList[secondNode.id].begin(), _adjacencyList[secondNode.id].end(),
+        [firstNode](const Node& x) { 
+        return x.id == firstNode.id;
+    }), _adjacencyList[secondNode.id].end());
+}
+
 void Graph::setMSTStrategy(MSTStrategy *strategy) {
     this->mstStrategy = strategy;
 }
