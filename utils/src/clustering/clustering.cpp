@@ -31,26 +31,24 @@ void Clustering::buildGraph()
     }
 }
 
-vector<vector<pair<int, float>>> Clustering::getAdjacencyMatrix()
+void Clustering::buildAdjacencyMatrix()
 {
     auto adjacencyList = _graph.getAdjacencyList();
     auto nodesNumber = adjacencyList.size();
     // initialize matrix in (-1,-1) which means no edge exists
-    auto adjacencyMatrix = vector<vector<pair<int, float>>>(nodesNumber, vector<pair<int, float>>(nodesNumber, pair<int, float>(-1, -1)));
+    _adjacencyMatrix = vector<vector<pair<int, float>>>(nodesNumber, vector<pair<int, float>>(nodesNumber, pair<int, float>(-1, -1)));
     for (auto const& edge : _graph.getEdges())
     {
         auto first = edge.nodes.first.id;
         auto second = edge.nodes.second.id;
-        adjacencyMatrix[first][second] = pair<int, float>(edge.id, edge.weight);
-        adjacencyMatrix[second][first] = pair<int, float>(edge.id, edge.weight);
+        _adjacencyMatrix[first][second] = pair<int, float>(edge.id, edge.weight);
+        _adjacencyMatrix[second][first] = pair<int, float>(edge.id, edge.weight);
     }
-    return adjacencyMatrix;
 }
 
 vector<Edge> Clustering::getNeighborhood(Edge edge, bool fromFirstNode)
 {
     auto adjacencyList = _graph.getAdjacencyList();
-    auto adjacencyMatrix = getAdjacencyMatrix();
     // this keeps record of edges added to the neighborhood with a true value
     // if their neighbors have also been added
     auto visitedEdges = map<int, bool>();
@@ -62,7 +60,8 @@ vector<Edge> Clustering::getNeighborhood(Edge edge, bool fromFirstNode)
     auto depthLevel = 0;
     while (depthLevel < _neighborhoodDepth)
     {
-        for (size_t neighborIndex = 0; neighborIndex < neighborhood.size(); ++neighborIndex)
+        int totalNeighbors = neighborhood.size();
+        for (auto neighborIndex = 0; neighborIndex < totalNeighbors; ++neighborIndex)
         {
             auto neighbor = neighborhood[neighborIndex];
             // skip if already explored
@@ -73,7 +72,7 @@ vector<Edge> Clustering::getNeighborhood(Edge edge, bool fromFirstNode)
                 auto firstNode = neighbor.nodes.first;
                 for (auto const& adjacentNode : adjacencyList[firstNode.id])
                 {
-                    auto adjacentEdge = adjacencyMatrix[firstNode.id][adjacentNode.id];
+                    auto adjacentEdge = _adjacencyMatrix[firstNode.id][adjacentNode.id];
                     // skip if already added as neighbor
                     if (visitedEdges.count(adjacentEdge.first)) continue;
                     // add newly found edge
@@ -87,7 +86,7 @@ vector<Edge> Clustering::getNeighborhood(Edge edge, bool fromFirstNode)
                 auto secondNode = neighbor.nodes.second;
                 for (auto const& adjacentNode : adjacencyList[secondNode.id])
                 {
-                    auto adjacentEdge = adjacencyMatrix[secondNode.id][adjacentNode.id];
+                    auto adjacentEdge = _adjacencyMatrix[secondNode.id][adjacentNode.id];
                     // skip if already added as neighbor
                     if (visitedEdges.count(adjacentEdge.first)) continue;
                     // add newly found edge
@@ -175,17 +174,22 @@ vector<int> Clustering::getClustersByPoint()
     _graph = _graph.getMST();
 
     // remove inconsistent edges from MST
+    buildAdjacencyMatrix();
     auto edges = _graph.getEdges();
-    for (int edgeIndex = 0; edgeIndex < edges.size(); ++edgeIndex)
+    for (size_t edgeIndex = 0; edgeIndex < edges.size(); ++edgeIndex)
     {
         auto edge = edges[edgeIndex];
         auto neighboorhoods = getNeighborhoods(edge);
         if (isInconsistentEdge(edge, neighboorhoods))
         {
             _graph.removeEdge(edge);
+            auto firstNode = edge.nodes.first;
+            auto secondNode = edge.nodes.second;
+            _adjacencyMatrix[firstNode.id][secondNode.id] = pair<int, float>(-1, -1);
+            _adjacencyMatrix[secondNode.id][firstNode.id] = pair<int, float>(-1, -1);
         }
     }
 
     // get clusters as connected components
-    return vector<int>();
+    return _graph.componenteConexaDeVertices();
 }

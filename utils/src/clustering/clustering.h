@@ -28,9 +28,10 @@ private:
     int _neighborhoodDepth;
     float _inconsistencyParameter;
     Graph _graph;
+    vector<vector<pair<int, float>>> _adjacencyMatrix;
 
     void buildGraph();
-    vector<vector<pair<int, float>>> getAdjacencyMatrix();
+    void buildAdjacencyMatrix();
     vector<Edge> getNeighborhood(Edge edge, bool fromFirstNode);
     pair<vector<Edge>, vector<Edge>> getNeighborhoods(Edge edge);
     bool isInconsistentEdge(Edge edge, pair<vector<Edge>, vector<Edge>> neighborhoods);
