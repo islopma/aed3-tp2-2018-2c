@@ -2,6 +2,9 @@
 #define __GRAPH__
 
 #include <vector>
+#include <limits>
+#include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -59,6 +62,9 @@ private:
     void addNode();
     void sortAdjacencyLists();
     MSTStrategy *mstStrategy;
+    bool solveBellmanFord(vector<int> * _parents, vector<float> * _peso) const;
+    vector<vector<float>> getAdjacencyMatrixDi() const;
+
 
 public:
     vector<vector<float>> getAdjacencyMatrix() const;
@@ -82,6 +88,9 @@ public:
     bool areVerticesToVisit(vector<int> &vertexByComponent);
 
     void visitVertexFrom(int origin, vector<int> &vertexByComponents, int numberOfComponent);
+    bool BellmanFord() const;
+    vector<vector<float>> getFloydCycle() const;
+    void addEdgeDir(const Node &from, const Node &to, const float weight);
 };
 
 class MSTStrategy{
