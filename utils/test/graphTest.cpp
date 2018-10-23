@@ -145,3 +145,86 @@ TEST_F(GraphTest, whenGraphIsAForest2_mustReturnAllVertexInDifferentComponent) {
 
     GTEST_ASSERT_NE(actualComponent.at(10), actualComponent.at(4));
 }
+
+
+//TESTS DEL SEGUNDO PROBLEMA
+
+TEST_F(GraphTest, FloydPositivo3){          //hay res
+    Graph grafo(3);
+    grafo.addEdgeDir(Node(0),Node(1),15);
+    grafo.addEdgeDir(Node(1),Node(0),0.3);
+    grafo.addEdgeDir(Node(0),Node(2),20);
+    grafo.addEdgeDir(Node(2),Node(0),0.05);
+    grafo.addEdgeDir(Node(1),Node(2),2);
+    grafo.addEdgeDir(Node(2),Node(1),0.5);
+    bool res = grafo.getFloydCycle();
+
+    EXPECT_EQ(res, true);
+
+}
+
+
+TEST_F(GraphTest, FloydPositivo4){          //hay res
+    Graph grafo(4);
+    grafo.addEdgeDir(Node(0),Node(1),15);
+    grafo.addEdgeDir(Node(1),Node(0),0.3);
+    grafo.addEdgeDir(Node(0),Node(2),20);
+    grafo.addEdgeDir(Node(2),Node(0),0.05);
+    grafo.addEdgeDir(Node(1),Node(2),2);
+    grafo.addEdgeDir(Node(2),Node(1),0.5);
+    grafo.addEdgeDir(Node(3),Node(1),0.2);
+    grafo.addEdgeDir(Node(1),Node(3),5);
+    grafo.addEdgeDir(Node(3),Node(2),0.1);
+    grafo.addEdgeDir(Node(2),Node(3),10);
+    grafo.addEdgeDir(Node(3),Node(0),50);
+    grafo.addEdgeDir(Node(0),Node(3),0.02);
+
+    bool res = grafo.getFloydCycle();
+
+    EXPECT_EQ(res, true);
+
+}
+
+TEST_F(GraphTest, FloydotroPositivo3){          // hay res
+    Graph grafo(3);
+    grafo.addEdgeDir(Node(0),Node(1),1);
+    grafo.addEdgeDir(Node(1),Node(0),1);
+    grafo.addEdgeDir(Node(0),Node(2),20);
+    grafo.addEdgeDir(Node(2),Node(0),0.05);
+    grafo.addEdgeDir(Node(1),Node(2),2);
+    grafo.addEdgeDir(Node(2),Node(1),0.5);
+    bool res = grafo.getFloydCycle();
+
+    EXPECT_EQ(res, true);
+
+}
+
+TEST_F(GraphTest, FloydNegativo3){          //no hay res, valen todas lo mismo
+    Graph grafo(3);
+    grafo.addEdgeDir(Node(0),Node(1),1);
+    grafo.addEdgeDir(Node(1),Node(0),1);
+    grafo.addEdgeDir(Node(0),Node(2),1);
+    grafo.addEdgeDir(Node(2),Node(0),1);
+    grafo.addEdgeDir(Node(1),Node(2),1);
+    grafo.addEdgeDir(Node(2),Node(1),1);
+    bool res = grafo.getFloydCycle();
+
+    EXPECT_EQ(res, false);
+
+
+}
+
+TEST_F(GraphTest, FloydotroNegativo3){          //no hay res
+    Graph grafo(3);
+    grafo.addEdgeDir(Node(0),Node(1),5);
+    grafo.addEdgeDir(Node(1),Node(0),0.2);
+    grafo.addEdgeDir(Node(0),Node(2),10);
+    grafo.addEdgeDir(Node(2),Node(0),0.1);
+    grafo.addEdgeDir(Node(1),Node(2),2);
+    grafo.addEdgeDir(Node(2),Node(1),0.5);
+    bool res = grafo.getFloydCycle();
+
+    EXPECT_EQ(res, false);
+
+
+}

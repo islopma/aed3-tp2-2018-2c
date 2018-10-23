@@ -63,8 +63,10 @@ private:
     void sortAdjacencyLists();
     MSTStrategy *mstStrategy;
     bool solveBellmanFord(vector<int> * _parents, vector<float> * _peso) const;
-    vector<vector<float>> getAdjacencyMatrixDi() const;
-
+    vector<vector<float>> getAdjacencyMatrixDi() ;
+    void assignDivisas(vector<int> padres, int nodo) ;
+    vector<int> _divisas;
+    vector<int> parents;
 
 public:
     vector<vector<float>> getAdjacencyMatrix() const;
@@ -89,8 +91,10 @@ public:
 
     void visitVertexFrom(int origin, vector<int> &vertexByComponents, int numberOfComponent);
     bool BellmanFord() const;
-    vector<vector<float>> getFloydCycle() const;
+
+    bool getFloydCycle();
     void addEdgeDir(const Node &from, const Node &to, const float weight);
+    vector<int> getDivisasRes();        //te da la tira de divisas del resultado
 };
 
 class MSTStrategy{
