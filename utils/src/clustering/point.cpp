@@ -6,6 +6,6 @@ Point::Point(const float &X, const float &Y)
 
 float Point::distance(const Point &other)
 {
-    // calculate L2 norm squared of (this - other)
-    return pow(this->X - other.X, 2) + pow(this->Y - other.Y, 2);
+    // calculate L2 norm (this - other)
+    return sqrt(pow(this->X - other.X, 2) + pow(this->Y - other.Y, 2));
 }
