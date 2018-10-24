@@ -332,7 +332,7 @@ void Graph::addEdgeDir(const Node &from, const Node &to, const float weight)
 
 }
 
-bool Graph::BellmanFord() const{
+string Graph::BellmanFord() const{
     unsigned long nodesNumber = _adjacencyList.size();
 
     vector<float> weight(nodesNumber, std::numeric_limits<float>::infinity());
@@ -342,62 +342,88 @@ bool Graph::BellmanFord() const{
     vector<float> * ref2 = &weight;
 
     bool existsNegativeCycle = solveBellmanFord(ref1, ref2);
-
+    string res;
 
     if(existsNegativeCycle){
-        std::cout << "SI";
+        res.append("SI");
 
-        //TODO: recomponer el ciclo de divisas que forman el ciclo negativo
         int empiezoEn;
         vector<int> cicloNeg;
-
+        bool encontreCiclo = false;
         for(int i : parents){
             empiezoEn = i;
-            if(i != -1){
-                do{
+            if (i != -1) {
+                do {
                     cicloNeg.push_back(i);
                     i = parents[i];
-                }while(i != -1 || i != empiezoEn);
-            }
+                } while (i != -1 && i != empiezoEn);
 
-            if(i != -1 && i == empiezoEn){
-                for(int j : cicloNeg){
-                    cout << j << " ";
+                if (i == empiezoEn) {
+                    encontreCiclo = true;
+                    for (int j : cicloNeg) {
+                        res.append(" ");
+                        res.append(to_string(j));
+                    }
                 }
             }
+
+            if(encontreCiclo){
+                break;
+            }
+
             cicloNeg.clear();
         }
 
 
     }else{
-        std::cout << "NO";
+        res.append("NO");
     }
 
 
-    return existsNegativeCycle;
+    return res;
+}
+
+void Graph::recibirParametrosArbitraje(){
+    int cantidadDeNodos, origen, destino;
+    float peso;
+    cin >> cantidadDeNodos;
+    build(cantidadDeNodos);
+    for(origen = 0; origen < cantidadDeNodos; origen++){
+        for(destino = 0; destino < cantidadDeNodos; destino++){
+            cin >> peso;
+            if(origen != destino){
+                addEdgeDir(Node(origen), Node(destino), peso);
+            }
+        }
+    }
 }
 
 bool Graph::solveBellmanFord(vector<int> * _parents, vector<float> * _peso) const{
-    bool existsNegativeCycle = false;
     unsigned long nodesNumber = _adjacencyList.size();
 
 
-    vector<float> weight = *(_peso);
-    vector<int> parents = *(_parents);
+    vector<float> &weight = *(_peso);
+    vector<int> &parents = *(_parents);
 
-    // INVERTIR EDGES???
-    /*
-    vector<Edge> invertedEdges(edges.size());
-    for (unsigned long i = 0; i < edges.size(); i++){
-        invertedEdges[i] = Edge(i, edges[i].nodes.first, edges[i].nodes.first, (float)pow(edges[i].weight, -1));
+    // INVERTIR EDGES
+    Edge vacio = Edge(0,Node(0), Node(0), 0.0);
+    vector<Edge> invertedEdges(_edges.size(), vacio);
+    float nuevoWeight;
+    for (int i = 0; i < _edges.size(); i++){
+        //excepcion para el caso e.weight == 0.0
+        nuevoWeight = std::numeric_limits<float>::infinity();
+        if(_edges[i].weight != 0){
+            nuevoWeight = (float)pow(_edges[i].weight, -1);
+        }
+        invertedEdges[i] = Edge(i, _edges[i].nodes.first, _edges[i].nodes.second, nuevoWeight);
     }
-    */
-    weight[0] = 0;
-    parents[0] = 0;
 
-    for (unsigned long i = 1; i < nodesNumber - 1; i++) {
-        for (Edge e : _edges) {
-            if (weight[e.nodes.second.id] > weight[e.nodes.first.id] * e.weight) {
+    weight[0] = 1;
+    parents[0] = -1;
+
+    for (unsigned long i = 0; i < nodesNumber -1; i++) {
+        for (Edge e : invertedEdges) {
+            if (weight[e.nodes.second.id] > weight[e.nodes.first.id] * e.weight ) {
                 weight[e.nodes.second.id] = weight[e.nodes.first.id] * e.weight;
                 parents[e.nodes.second.id] = e.nodes.first.id;
             }
@@ -405,7 +431,9 @@ bool Graph::solveBellmanFord(vector<int> * _parents, vector<float> * _peso) cons
     }
 
     //busco ciclo negativo
-    for (Edge e : _edges) {
+    bool existsNegativeCycle = false;
+
+    for (Edge e : invertedEdges) {
         if (weight[e.nodes.second.id] > weight[e.nodes.first.id] * e.weight) {
             weight[e.nodes.second.id] = weight[e.nodes.first.id] * e.weight;
             parents[e.nodes.second.id] = e.nodes.first.id;

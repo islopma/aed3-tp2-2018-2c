@@ -82,13 +82,15 @@ public:
     void setMSTStrategy(MSTStrategy *strategy);
     Graph getMST();
     vector<int> componenteConexaDeVertices();
+    void recibirParametrosArbitraje();
+
 
     int firstVertexNotVisited(vector<int> &vertexByComponent);
 
     bool areVerticesToVisit(vector<int> &vertexByComponent);
 
     void visitVertexFrom(int origin, vector<int> &vertexByComponents, int numberOfComponent);
-    bool BellmanFord() const;
+    string BellmanFord() const;
     vector<vector<float>> getFloydCycle() const;
     void addEdgeDir(const Node &from, const Node &to, const float weight);
 };
