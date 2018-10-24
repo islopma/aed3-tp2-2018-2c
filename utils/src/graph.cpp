@@ -7,10 +7,10 @@
 
 
 Node::Node(const int &id)
-: id(id) {}
+        : id(id) {}
 
 Edge::Edge(const int id, const Node &first, const Node &second, const float weight)
-: id(id), nodes(make_pair(first, second)), weight(weight) {}
+        : id(id), nodes(make_pair(first, second)), weight(weight) {}
 
 Graph::Graph() {
     _edges = vector<Edge>();
@@ -104,26 +104,26 @@ void Graph::removeEdge(Edge edge)
 {
     // remove from edges list;
     _edges.erase(remove_if(
-        _edges.begin(), _edges.end(),
-        [edge](const Edge& x) { 
-        return x.id == edge.id;
-    }), _edges.end());
+            _edges.begin(), _edges.end(),
+            [edge](const Edge& x) {
+                return x.id == edge.id;
+            }), _edges.end());
 
     // remove from adjacency list
     auto firstNode = edge.nodes.first;
     auto secondNode = edge.nodes.second;
 
     _adjacencyList[firstNode.id].erase(remove_if(
-        _adjacencyList[firstNode.id].begin(), _adjacencyList[firstNode.id].end(),
-        [secondNode](const Node& x) { 
-        return x.id == secondNode.id;
-    }), _adjacencyList[firstNode.id].end());
+            _adjacencyList[firstNode.id].begin(), _adjacencyList[firstNode.id].end(),
+            [secondNode](const Node& x) {
+                return x.id == secondNode.id;
+            }), _adjacencyList[firstNode.id].end());
 
     _adjacencyList[secondNode.id].erase(remove_if(
-        _adjacencyList[secondNode.id].begin(), _adjacencyList[secondNode.id].end(),
-        [firstNode](const Node& x) { 
-        return x.id == firstNode.id;
-    }), _adjacencyList[secondNode.id].end());
+            _adjacencyList[secondNode.id].begin(), _adjacencyList[secondNode.id].end(),
+            [firstNode](const Node& x) {
+                return x.id == firstNode.id;
+            }), _adjacencyList[secondNode.id].end());
 }
 
 void Graph::setMSTStrategy(MSTStrategy *strategy) {
@@ -272,29 +272,46 @@ void Graph::visitVertexFrom(int origin, vector<int> &vertexByComponents, int num
     }
 }
 
-vector<vector<float>> Graph::getAdjacencyMatrixDi() const {
+vector<vector<float>> Graph::getAdjacencyMatrixDi()  {
     auto nodesNumber = _adjacencyList.size();
     // initialize matrix in -1 which means no edge exists
     auto adjacencyMatrix = vector<vector<float>>(nodesNumber, vector<float>(nodesNumber, -1));
+
+    for(int x=0;x<nodesNumber;x++){
+        parents.push_back(-1);
+    }
 
     for (auto const& edge : _edges)
     {
         auto first = edge.nodes.first.id;
         auto second = edge.nodes.second.id;
         adjacencyMatrix[first][second] = edge.weight;
+        parents[second] = first;
     }
 
 
     return adjacencyMatrix;
 }
 
+void Graph::assignDivisas(vector<int> padres, int nodo)  {
+    int nodoActual = nodo;
+    _divisas.push_back(nodoActual);
+    while(padres[nodoActual] != nodoActual){
+        nodoActual = padres[nodo];
+        _divisas.push_back(nodoActual);
+    }
+}
 
-vector<vector<float>> Graph::getFloydCycle() const {
+vector<int> Graph::getDivisasRes() {
+    return _divisas;
+}
+
+bool Graph::getFloydCycle()  {
 
     auto sizenodes = _adjacencyList.size();
     auto adjMatrix = getAdjacencyMatrixDi();
     auto solMatrix = vector<vector<float>>(sizenodes, vector<float>(sizenodes));
-    vector<int> parents(sizenodes,-1);
+
 
 
     //igualo la matriz solucion a la de adj que tengo
@@ -316,9 +333,20 @@ vector<vector<float>> Graph::getFloydCycle() const {
             }
         }
     }
+    //vector<vector<float>> x = grafo.getFloydCycle();
 
-    return solMatrix;
+    bool res = false;
+    for(int i=0;i<sizenodes;i++){
 
+        if(solMatrix[i][i] > 1){
+            res = true;
+            //encontre un resultado, ahora me fijo sus padres para sacar la cola de divisas necesarias para ganancia
+            assignDivisas(parents,i);
+            break;
+        }
+    }
+
+    return res;
 
 
 }
