@@ -84,14 +84,15 @@ public:
     void setMSTStrategy(MSTStrategy *strategy);
     Graph getMST();
     vector<int> componenteConexaDeVertices();
+    void recibirParametrosArbitraje();
+
 
     int firstVertexNotVisited(vector<int> &vertexByComponent);
 
     bool areVerticesToVisit(vector<int> &vertexByComponent);
 
     void visitVertexFrom(int origin, vector<int> &vertexByComponents, int numberOfComponent);
-    bool BellmanFord() const;
-
+    string BellmanFord() const;
     bool getFloydCycle();
     void addEdgeDir(const Node &from, const Node &to, const float weight);
     vector<int> getDivisasRes();        //te da la tira de divisas del resultado

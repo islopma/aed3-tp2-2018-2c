@@ -112,6 +112,9 @@ pair<vector<Edge>, vector<Edge>> Clustering::getNeighborhoods(Edge edge)
 
 bool Clustering::isInconsistentEdge(Edge edge, pair<vector<Edge>, vector<Edge>> neighborhoods)
 {
+    // if one neighboorhood side has few edges, don't remove it
+    if (min(neighborhoods.first.size(), neighborhoods.second.size()) < _neighborhoodDepth)
+        return false;
     auto firstAverage = getNeighborhoodAverage(neighborhoods.first);
     auto secondAverage = getNeighborhoodAverage(neighborhoods.second);
     bool isInconsistent;
