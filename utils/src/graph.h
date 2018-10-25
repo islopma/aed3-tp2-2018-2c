@@ -2,9 +2,7 @@
 #define __GRAPH__
 
 #include <vector>
-#include <limits>
 #include <iostream>
-#include <cmath>
 
 using namespace std;
 
@@ -64,9 +62,9 @@ private:
     MSTStrategy *mstStrategy;
     bool solveBellmanFord(vector<int> * _parents, vector<float> * _peso) const;
     vector<vector<float>> getAdjacencyMatrixDi() ;
-    void assignDivisas(vector<int> padres, int nodo) ;
+    void assignDivisas(vector<vector<int>> next, int nodo) ;
     vector<int> _divisas;
-    vector<int> parents;
+    vector<vector<int>> next;
 
 public:
     vector<vector<float>> getAdjacencyMatrix() const;
@@ -95,8 +93,9 @@ public:
     string BellmanFord() const;
     bool getFloydCycle();
     void addEdgeDir(const Node &from, const Node &to, const float weight);
-    void getDivisasRes();        //te da la tira de divisas del resultado
-    void floydWarshall();
+    void addEdgeDirMinusLog(const Node &from, const Node &to, const float weight);
+    string getDivisasRes();        //te da la tira de divisas del resultado
+    string floydWarshall();
 };
 
 class MSTStrategy{
