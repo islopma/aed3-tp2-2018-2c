@@ -302,8 +302,13 @@ void Graph::assignDivisas(vector<int> padres, int nodo)  {
     }
 }
 
-vector<int> Graph::getDivisasRes() {
-    return _divisas;
+void Graph::getDivisasRes() {
+    cout << "divisas: ";
+    int i=0;
+    for(i;i<_divisas.size()-1;i++){
+        cout << _divisas[i] << ", ";
+    }
+    cout << _divisas[i] << endl;
 }
 
 bool Graph::getFloydCycle()  {
@@ -349,6 +354,14 @@ bool Graph::getFloydCycle()  {
     return res;
 
 
+}
+
+void Graph::floydWarshall() {                       //el que engloba todo
+    bool res = this->getFloydCycle();
+    if(res){
+        cout << "SI" << endl;
+        getDivisasRes();
+    } else {cout << "NO";}
 }
 
 
