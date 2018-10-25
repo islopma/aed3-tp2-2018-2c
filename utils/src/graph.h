@@ -95,7 +95,8 @@ public:
     string BellmanFord() const;
     bool getFloydCycle();
     void addEdgeDir(const Node &from, const Node &to, const float weight);
-    vector<int> getDivisasRes();        //te da la tira de divisas del resultado
+    void getDivisasRes();        //te da la tira de divisas del resultado
+    void floydWarshall();
 };
 
 class MSTStrategy{
