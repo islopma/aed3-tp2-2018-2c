@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <limits>
 #include <queue>
+#include <cmath>
 
 #define NOT_VISITED 0
 
@@ -274,11 +275,11 @@ void Graph::visitVertexFrom(int origin, vector<int> &vertexByComponents, int num
 
 vector<vector<float>> Graph::getAdjacencyMatrixDi()  {
     auto nodesNumber = _adjacencyList.size();
-    // initialize matrix in -1 which means no edge exists
-    auto adjacencyMatrix = vector<vector<float>>(nodesNumber, vector<float>(nodesNumber, -1));
+    // initialize matrix in infinity which means no edge exists
+    auto adjacencyMatrix = vector<vector<float>>(nodesNumber, vector<float>(nodesNumber, numeric_limits<float>::infinity()));
 
     for(int x=0;x<nodesNumber;x++){
-        parents.push_back(-1);
+        next.push_back(vector<int>(nodesNumber));
     }
 
     for (auto const& edge : _edges)
@@ -286,29 +287,29 @@ vector<vector<float>> Graph::getAdjacencyMatrixDi()  {
         auto first = edge.nodes.first.id;
         auto second = edge.nodes.second.id;
         adjacencyMatrix[first][second] = edge.weight;
-        parents[second] = first;
+        next[first][second] = second;
     }
 
 
     return adjacencyMatrix;
 }
 
-void Graph::assignDivisas(vector<int> padres, int nodo)  {
+void Graph::assignDivisas(vector<vector<int>> next, int nodo)  {
     int nodoActual = nodo;
     _divisas.push_back(nodoActual);
-    while(padres[nodoActual] != nodoActual){
-        nodoActual = padres[nodo];
+    while(next[nodoActual][nodo] != nodo){
+        nodoActual = next[nodoActual][nodo];
         _divisas.push_back(nodoActual);
     }
 }
 
-void Graph::getDivisasRes() {
-    cout << "divisas: ";
-    int i=0;
-    for(i;i<_divisas.size()-1;i++){
-        cout << _divisas[i] << ", ";
+string Graph::getDivisasRes() {
+    string divisasRes;
+    for(int i=0;i<_divisas.size();i++){
+        divisasRes.append(" ");
+        divisasRes.append(to_string(_divisas[i]));
     }
-    cout << _divisas[i] << endl;
+    return divisasRes;
 }
 
 bool Graph::getFloydCycle()  {
@@ -331,37 +332,30 @@ bool Graph::getFloydCycle()  {
             for(int j=0; j< sizenodes; j++){
                 float uno = solMatrix[i][k];
                 float dos = solMatrix[k][j];
-                if(uno * dos > solMatrix[i][j] && (uno>0 && dos>0)){
-                    solMatrix[i][j] = uno*dos;
-                    parents[j] = k;
+                if(uno + dos < solMatrix[i][j]){
+                    solMatrix[i][j] = uno + dos;
+                    next[i][j] = next[i][k];
+                    if (i == j && solMatrix[i][j] < 0){
+                        //encontre un resultado, ahora me fijo sus padres para sacar la cola de divisas necesarias para ganancia
+                        assignDivisas(next,i);
+                        return true;
+                    }
                 }
             }
         }
     }
-    //vector<vector<float>> x = grafo.getFloydCycle();
 
-    bool res = false;
-    for(int i=0;i<sizenodes;i++){
-
-        if(solMatrix[i][i] > 1){
-            res = true;
-            //encontre un resultado, ahora me fijo sus padres para sacar la cola de divisas necesarias para ganancia
-            assignDivisas(parents,i);
-            break;
-        }
-    }
-
-    return res;
-
-
+    return false;
 }
 
-void Graph::floydWarshall() {                       //el que engloba todo
+string Graph::floydWarshall() {                       //el que engloba todo
     bool res = this->getFloydCycle();
+    string output;
     if(res){
-        cout << "SI" << endl;
-        getDivisasRes();
-    } else {cout << "NO";}
+        output.append("SI");
+        output.append(getDivisasRes());
+    } else {output.append("NO");}
+    return output;
 }
 
 
@@ -371,6 +365,11 @@ void Graph::addEdgeDir(const Node &from, const Node &to, const float weight)
     _adjacencyList[from.id].push_back(to.id);
 
 
+}
+
+void Graph::addEdgeDirMinusLog(const Node &from, const Node &to, const float weight)
+{
+    addEdgeDir(from, to, -log(weight));
 }
 
 string Graph::BellmanFord() const{
@@ -431,9 +430,9 @@ void Graph::recibirParametrosArbitraje(){
     build(cantidadDeNodos);
     for(origen = 0; origen < cantidadDeNodos; origen++){
         for(destino = 0; destino < cantidadDeNodos; destino++){
-            cin >> peso;
+            cin >> peso;;
             if(origen != destino){
-                addEdgeDir(Node(origen), Node(destino), peso);
+                addEdgeDirMinusLog(Node(origen), Node(destino), peso);
             }
         }
     }
@@ -446,26 +445,13 @@ bool Graph::solveBellmanFord(vector<int> * _parents, vector<float> * _peso) cons
     vector<float> &weight = *(_peso);
     vector<int> &parents = *(_parents);
 
-    // INVERTIR EDGES
-    Edge vacio = Edge(0,Node(0), Node(0), 0.0);
-    vector<Edge> invertedEdges(_edges.size(), vacio);
-    float nuevoWeight;
-    for (int i = 0; i < _edges.size(); i++){
-        //excepcion para el caso e.weight == 0.0
-        nuevoWeight = std::numeric_limits<float>::infinity();
-        if(_edges[i].weight != 0){
-            nuevoWeight = (float)pow(_edges[i].weight, -1);
-        }
-        invertedEdges[i] = Edge(i, _edges[i].nodes.first, _edges[i].nodes.second, nuevoWeight);
-    }
-
-    weight[0] = 1;
+    weight[0] = 0;
     parents[0] = -1;
 
     for (unsigned long i = 0; i < nodesNumber -1; i++) {
-        for (Edge e : invertedEdges) {
-            if (weight[e.nodes.second.id] > weight[e.nodes.first.id] * e.weight ) {
-                weight[e.nodes.second.id] = weight[e.nodes.first.id] * e.weight;
+        for (Edge e : _edges) {
+            if (weight[e.nodes.second.id] > weight[e.nodes.first.id] + e.weight ) {
+                weight[e.nodes.second.id] = weight[e.nodes.first.id] + e.weight;
                 parents[e.nodes.second.id] = e.nodes.first.id;
             }
         }
@@ -474,9 +460,9 @@ bool Graph::solveBellmanFord(vector<int> * _parents, vector<float> * _peso) cons
     //busco ciclo negativo
     bool existsNegativeCycle = false;
 
-    for (Edge e : invertedEdges) {
-        if (weight[e.nodes.second.id] > weight[e.nodes.first.id] * e.weight) {
-            weight[e.nodes.second.id] = weight[e.nodes.first.id] * e.weight;
+    for (Edge e : _edges) {
+        if (weight[e.nodes.second.id] > weight[e.nodes.first.id] + e.weight) {
+            weight[e.nodes.second.id] = weight[e.nodes.first.id] + e.weight;
             parents[e.nodes.second.id] = e.nodes.first.id;
             existsNegativeCycle = true;
         }
