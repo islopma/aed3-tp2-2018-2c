@@ -57,7 +57,7 @@ TEST_F(Bellman, dosNodos){
     graph->addEdgeDirMinusLog(Node(0),Node(1), 1.3);
     graph->addEdgeDirMinusLog(Node(1),Node(0), 1.3);
     
-   	EXPECT_EQ(graph->BellmanFord(), "SI 1 0");
+   	EXPECT_EQ(graph->BellmanFord(), "SI 0 1");
 }
 
 TEST_F(Bellman, dosNodos2){
@@ -65,7 +65,7 @@ TEST_F(Bellman, dosNodos2){
     graph->addEdgeDirMinusLog(Node(0),Node(1), 1.35);
     graph->addEdgeDirMinusLog(Node(1),Node(0), 0.80);
 
-    EXPECT_EQ(graph->BellmanFord(), "SI 1 0");
+    EXPECT_EQ(graph->BellmanFord(), "SI 0 1");
 }
 
 TEST_F(Bellman, dosNodos3){
@@ -82,7 +82,7 @@ TEST_F(Bellman, tresNodos){
     graph->addEdgeDirMinusLog(Node(1),Node(2), 1.65);
     graph->addEdgeDirMinusLog(Node(2),Node(0), 1.65);
 
-    EXPECT_EQ(graph->BellmanFord(), "SI 2 1 0");
+    EXPECT_EQ(graph->BellmanFord(), "SI 0 1 2");
 }
 
 TEST_F(Bellman, tresNodos2){
@@ -91,7 +91,7 @@ TEST_F(Bellman, tresNodos2){
     graph->addEdgeDirMinusLog(Node(1),Node(2), 0.50);
     graph->addEdgeDirMinusLog(Node(2),Node(0), 1.65);
 
-    EXPECT_EQ(graph->BellmanFord(), "SI 2 1 0");
+    EXPECT_EQ(graph->BellmanFord(), "SI 0 1 2");
 }
 
 TEST_F(Bellman, tresNodos3){
@@ -110,7 +110,7 @@ TEST_F(Bellman, tresNodos4){
     graph->addEdgeDirMinusLog(Node(1),Node(2), 0.50);
     graph->addEdgeDirMinusLog(Node(2),Node(0), 1.65);
 
-    EXPECT_EQ(graph->BellmanFord(), "SI 2 1 0");
+    EXPECT_EQ(graph->BellmanFord(), "SI 0 1 2");
 }
 
 TEST_F(Bellman, cuatroNodos){
@@ -120,7 +120,7 @@ TEST_F(Bellman, cuatroNodos){
     graph->addEdgeDirMinusLog(Node(2),Node(1), 1.65);
     graph->addEdgeDirMinusLog(Node(2),Node(3), 0.14);
 
-    EXPECT_EQ(graph->BellmanFord(), "SI 2 1");
+    EXPECT_EQ(graph->BellmanFord(), "SI 1 2");
 }
 
 TEST_F(Bellman, cincoNodos){

@@ -387,22 +387,34 @@ string Graph::BellmanFord() const{
     if(existsNegativeCycle){
         res.append("SI");
 
-        int empiezoEn;
+        
         vector<int> cicloNeg;
         bool encontreCiclo = false;
+        bool estuveAhi;
         for(int i : parents){
-            empiezoEn = i;
+            estuveAhi = false;
             if (i != -1) {
                 do {
-                    cicloNeg.push_back(i);
-                    i = parents[i];
-                } while (i != -1 && i != empiezoEn);
 
-                if (i == empiezoEn) {
+                        for(int j : cicloNeg){
+                            if(j == i){
+                                estuveAhi = true;
+                            }
+                        }
+                        if(!estuveAhi) {
+                            cicloNeg.push_back(i);
+                            i = parents[i];
+                        }
+
+                } while (i != -1 && !estuveAhi);
+
+                if(i != -1){
                     encontreCiclo = true;
-                    for (int j : cicloNeg) {
+                    bool fin = false;
+                    for (auto rit = cicloNeg.crbegin(); rit != cicloNeg.crend() && !fin; ++rit) {
+                        if(*rit == i){fin = true;};
                         res.append(" ");
-                        res.append(to_string(j));
+                        res.append(to_string(*rit));
                     }
                 }
             }
