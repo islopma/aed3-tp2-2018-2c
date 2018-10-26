@@ -78,7 +78,7 @@ public:
     vector<Edge> getEdges() ;
     vector<vector<Node>> getAdjacencyList() ;
     bool operator==(Graph &other);
-    float getTotalWeigth();
+    float getTotalWeight();
     void setMSTStrategy(MSTStrategy *strategy);
     Graph getMST();
     vector<int> componenteConexaDeVertices();

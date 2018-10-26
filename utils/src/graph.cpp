@@ -84,7 +84,7 @@ vector<vector<float>> Graph::getAdjacencyMatrix() const
     return adjacencyMatrix;
 }
 
-float Graph::getTotalWeigth() {
+float Graph::getTotalWeight() {
     float totalWeight = 0;
     for (auto const& edge : this->getEdges())
     {
