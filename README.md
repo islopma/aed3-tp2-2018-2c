@@ -14,4 +14,5 @@ Ejecutables
     Hay que pasarle los argumentos obligatorios sobre el modo de resolver el problema:
         ./arbitraje {BellmanFord|FloydWarshall}
         e.g. ./arbitraje FloydWarshall
-4. arbitraje_time -> recibe los mismos argumentos y entrada que arbitraje pero devuelve el tiempo en ns que demora en resolverlo
+4. clustering_time -> recibe los mismos argumentos y entrada que clustering pero devuelve el tiempo en ns que demora en resolverlo
+5. arbitraje_time -> recibe los mismos argumentos y entrada que arbitraje pero devuelve el tiempo en ns que demora en resolverlo
