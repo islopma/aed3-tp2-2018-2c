@@ -461,12 +461,16 @@ bool Graph::solveBellmanFord(vector<int> * _parents, vector<float> * _peso) cons
     parents[0] = -1;
 
     for (unsigned long i = 0; i < nodesNumber -1; i++) {
+        bool relaxed = false;
         for (Edge e : _edges) {
             if (weight[e.nodes.second.id] > weight[e.nodes.first.id] + e.weight ) {
                 weight[e.nodes.second.id] = weight[e.nodes.first.id] + e.weight;
                 parents[e.nodes.second.id] = e.nodes.first.id;
+                relaxed = true;
             }
         }
+        if(!relaxed)
+            return false;
     }
 
     //busco ciclo negativo
